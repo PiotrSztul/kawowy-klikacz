@@ -44,14 +44,17 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 0}
 .brand{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#e7cfb2}
 .brand i{width:8px;height:11px;border-radius:50%;background:var(--caramel);transform:rotate(-25deg);box-shadow:inset -2px 0 0 rgba(0,0,0,.25)}
-.top-right{display:flex;align-items:center;gap:8px}
-.live-pill{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);font-size:12.5px;font-weight:800;color:#e7cfb2;font-variant-numeric:tabular-nums;transition:transform .12s,background .2s}
+.top-right{display:flex;align-items:center;gap:6px}
+.live-pill{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 10px;border-radius:12px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);font-size:12.5px;font-weight:800;color:#e7cfb2;font-variant-numeric:tabular-nums;transition:transform .12s,background .2s}
 .live-pill:active{transform:scale(.94);background:rgba(255,255,255,.12)}
 .live-pill[hidden]{display:none}
 .dot{width:8px;height:8px;border-radius:50%;background:#8f7a68;flex:none;display:inline-block}
 .dot.on{background:#34d399;box-shadow:0 0 0 0 rgba(52,211,153,.7);animation:pulseDot 2s infinite}
-.icon-btn{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);display:grid;place-items:center;font-size:16px;transition:transform .12s,background .2s}
+.icon-btn{position:relative;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);display:grid;place-items:center;font-size:16px;transition:transform .12s,background .2s}
 .icon-btn:active{transform:scale(.92);background:rgba(255,255,255,.12)}
+.icon-btn[hidden]{display:none}
+.ic-dot{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #2a1a12}
+.ic-dot[hidden]{display:none}
 .score{text-align:center;padding:2px 16px 0}
 .count{font-size:clamp(38px,11.5vw,56px);font-weight:850;letter-spacing:-.035em;font-variant-numeric:tabular-nums;line-height:1.05;text-shadow:0 2px 0 rgba(0,0,0,.28)}
 .count-label{font-size:13px;color:#cfb699;letter-spacing:.03em;margin-top:2px}
@@ -88,10 +91,11 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 4px 8px;font-size:11.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.09em;font-weight:800}
 .panel-head .note{text-transform:none;letter-spacing:0;font-weight:700;font-size:12px}
 .seg{display:flex;background:#e5d6c1;border-radius:10px;padding:3px;gap:2px}
-.seg button{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:800;color:var(--ink-2);letter-spacing:.02em;text-transform:none}
+.seg button{padding:4px 9px;border-radius:8px;font-size:12px;font-weight:800;color:var(--ink-2);letter-spacing:.02em;text-transform:none;white-space:nowrap}
 .seg button[aria-pressed="true"]{background:#fffaf3;color:var(--ink);box-shadow:0 1px 2px rgba(60,35,20,.18)}
 .list{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px;padding:2px 2px 10px;scrollbar-width:none}
 .list::-webkit-scrollbar{display:none}
+.list[hidden]{display:none}
 
 .item{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px 10px 10px;border-radius:17px;background:#fffaf3;box-shadow:var(--card-shadow);transition:transform .12s,opacity .25s;flex:none}
 .item[hidden]{display:none}
@@ -116,7 +120,7 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .empty{text-align:center;color:var(--ink-3);padding:22px 10px;font-size:13.5px;line-height:1.5}
 .empty div{font-size:30px;margin-bottom:6px;filter:grayscale(.3)}
 
-/* ---------- online / ranking ---------- */
+/* ---------- online / ranking / czat ---------- */
 .nick-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:14px;background:#f4e9da;font-size:13px;flex:none}
 .nick-bar b{color:var(--ink)}
 .nick-btn{padding:5px 10px;border-radius:9px;background:#fffaf3;color:var(--ink);font-size:12px;font-weight:800;box-shadow:0 1px 2px rgba(60,35,20,.14)}
@@ -134,8 +138,27 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .p-score{text-align:right;font-variant-numeric:tabular-nums}
 .p-score b{display:block;font-size:14.5px;font-weight:850;color:var(--ink)}
 .p-score span{display:block;font-size:11.5px;color:var(--ink-2);margin-top:2px}
-.cfg-input{width:100%;padding:10px 12px;border-radius:12px;border:1.5px solid #dfd0bc;background:#fff;color:var(--ink);font:inherit;font-size:13.5px;margin-bottom:8px;-webkit-user-select:text;user-select:text}
+.cfg-input{width:100%;padding:10px 12px;border-radius:12px;border:1.5px solid #dfd0bc;background:#fff;color:var(--ink);font:inherit;font-size:16px;margin-bottom:8px;-webkit-user-select:text;user-select:text}
 .cfg-input:focus{outline:none;border-color:var(--caramel)}
+
+.chat-wrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+.chat-wrap[hidden]{display:none}
+.chat-msgs{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;gap:7px;padding:2px 2px 4px;scrollbar-width:none}
+.chat-msgs::-webkit-scrollbar{display:none}
+.msg{max-width:86%;align-self:flex-start;padding:8px 11px;border-radius:15px 15px 15px 5px;background:#fffaf3;color:var(--ink);box-shadow:0 1px 2px rgba(60,35,20,.14);flex:none}
+.msg.me{align-self:flex-end;border-radius:15px 15px 5px 15px;background:linear-gradient(180deg,#e09445,var(--caramel-2));color:#fff;box-shadow:0 3px 10px -4px rgba(185,110,40,.65)}
+.msg-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:800;margin-bottom:2px;color:var(--ink-2)}
+.msg.me .msg-h{color:rgba(255,255,255,.82)}
+.msg-t{font-size:13.5px;line-height:1.38;word-break:break-word;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
+.chat-form{display:flex;gap:6px;align-items:center;flex:none;padding-top:2px}
+.chat-in{flex:1;min-width:0;padding:9px 12px;border-radius:13px;border:1.5px solid #dfd0bc;background:#fff;color:var(--ink);font:inherit;font-size:16px;line-height:1.25;-webkit-user-select:text;user-select:text}
+.chat-in:focus{outline:none;border-color:var(--caramel)}
+.chat-send{flex:none;padding:10px 14px;border-radius:13px;background:linear-gradient(180deg,#e09445,var(--caramel-2));color:#fff;font-weight:800;font-size:14px;box-shadow:0 4px 10px -4px rgba(185,110,40,.7)}
+.chat-send:active{transform:scale(.95)}
+.chat-send:disabled{opacity:.5}
+.unread-tag{display:inline-block;margin-left:4px;padding:0 5px;border-radius:8px;background:#f97316;color:#fff;font-size:10px;line-height:15px;vertical-align:middle}
+.unread-tag[hidden]{display:none}
+@media (max-height:540px){#stage{min-height:60px}#sheet{height:64dvh}.buffs{display:none}}
 
 .ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:8px}
 .ach{aspect-ratio:1;border-radius:15px;display:grid;place-items:center;font-size:24px;background:linear-gradient(160deg,#fffaf3,#f3e4cf);box-shadow:var(--card-shadow);transition:transform .12s}
@@ -210,7 +233,8 @@ a.btn{display:block;text-align:center;text-decoration:none}
   <header class="top">
     <div class="brand"><i></i>Kawowy Klikacz</div>
     <div class="top-right">
-      <button id="btn-live" class="live-pill" type="button" aria-label="Gracze online" hidden=""><i class="dot on"></i><span id="live-cnt">0</span> online</button>
+      <button id="btn-live" class="live-pill" type="button" aria-label="Gracze online" hidden=""><i class="dot on"></i><span id="live-cnt">0</span></button>
+      <button id="btn-chat" class="icon-btn" type="button" aria-label="Czat publiczny" hidden="">💬<i class="ic-dot" id="chat-dot" hidden=""></i></button>
       <button id="btn-sound" class="icon-btn" type="button" aria-label="Dźwięk">🔊</button>
     </div>
   </header>
@@ -293,11 +317,19 @@ a.btn{display:block;text-align:center;text-decoration:none}
     <div id="panel-live" class="panel" hidden="">
       <div class="panel-head"><span id="live-head">Gracze online</span>
         <div class="seg" id="livefilter">
-          <button type="button" data-f="all" aria-pressed="true">Wszyscy</button>
+          <button type="button" data-f="all" aria-pressed="true">Ranking</button>
           <button type="button" data-f="on" aria-pressed="false">Online</button>
+          <button type="button" data-f="chat" id="btn-seg-chat" aria-pressed="false">Czat<span id="chat-cnt" class="unread-tag" hidden=""></span></button>
         </div>
       </div>
       <div id="live-list" class="list"></div>
+      <div id="chat-wrap" class="chat-wrap" hidden="">
+        <div id="chat-msgs" class="chat-msgs"></div>
+        <form id="chat-form" class="chat-form" autocomplete="off">
+          <input id="chat-in" class="chat-in" type="text" maxlength="200" placeholder="Napisz do graczy...">
+          <button id="chat-send" class="chat-send" type="submit">Wyślij</button>
+        </form>
+      </div>
     </div>
 
     <div id="panel-ach" class="panel" hidden="">
@@ -455,7 +487,7 @@ const makeUid = () => 'p_' + (crypto.randomUUID ? crypto.randomUUID().replace(/-
 const makeNick = () => 'Barista ' + (10 + Math.floor(Math.random() * 89));
 const fresh = () => ({ beans: 0, total: 0, lifetime: 0, taps: 0, lifeTaps: 0, owned: {}, upg: {}, ach: {}, golden: 0, prestige: 0,
   buffs: [], last: Date.now(), start: Date.now(), sound: true, vib: true, mode: 1,
-  uid: makeUid(), nick: makeNick(), nickSet: false, customDbUrl: '' });
+  uid: makeUid(), nick: makeNick(), nickSet: false, customDbUrl: '', lastChatTs: 0 });
 let S = fresh();
 function load() {
   try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(fresh(), JSON.parse(r)); } catch (e) {}
@@ -775,7 +807,7 @@ $('#btn-prestige').addEventListener('click', () => {
 $('#btn-reset').addEventListener('click', () => modal({ ic: '⚠️', title: 'Zresetować grę?', danger: true, ok: 'Usuń wszystko', cancel: 'Anuluj',
   body: 'Cały postęp, trofea i prestiż zostaną trwale usunięte.',
   onOk: () => {
-    const keep = { sound: S.sound, vib: S.vib, uid: S.uid, nick: S.nick, nickSet: S.nickSet, customDbUrl: S.customDbUrl };
+    const keep = { sound: S.sound, vib: S.vib, uid: S.uid, nick: S.nick, nickSet: S.nickSet, customDbUrl: S.customDbUrl, lastChatTs: S.lastChatTs };
     S = Object.assign(fresh(), keep);
     upgKey = null; newAch = 0; setBadge('ach', 0); renderBuffs(true); buildAch(); refreshAll(); save(); pushLive(true);
   } }));
@@ -788,7 +820,7 @@ $('#set-sound').addEventListener('change', e => { S.sound = e.target.checked; sy
 $('#set-vib').addEventListener('change', e => { S.vib = e.target.checked; save(); buzz(15); });
 $('#btn-sound').addEventListener('click', () => { S.sound = !S.sound; syncSettings(); save(); sfx('buy'); });
 $('#btn-nick').addEventListener('click', () => promptNick(false));
-$('#btn-live').addEventListener('click', () => showTab('live'));
+$('#btn-live').addEventListener('click', () => { showTab('live'); if (liveFilter === 'chat') setLiveView('all'); });
 let deferredInstall = null;
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; $('#btn-install').hidden = false; });
 $('#btn-install').addEventListener('click', async () => {
@@ -928,15 +960,34 @@ async function fetchLive() {
 }
 function updateOnlineBadges(count) {
   const hasDb = !!getDbUrl();
-  const pill = $('#btn-live');
+  const pill = $('#btn-live'), cbtn = $('#btn-chat');
   pill.hidden = !hasDb;
+  if (cbtn) cbtn.hidden = !hasDb;
   if (hasDb) setText($('#live-cnt'), count);
   setBadge('live', hasDb ? count : 0);
 }
+function setLiveView(mode) {
+  liveFilter = mode;
+  document.querySelectorAll('#livefilter button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.f === liveFilter)));
+  const isChat = liveFilter === 'chat';
+  $('#live-list').hidden = isChat;
+  $('#chat-wrap').hidden = !isChat;
+  if (isChat) {
+    setText($('#live-head'), 'Czat');
+    markChatRead();
+    renderChat(true);
+    fetchChat(true);
+  } else {
+    renderLive();
+  }
+}
 function renderLive() {
+  if (liveFilter === 'chat') { renderChat(false); return; }
   const list = $('#live-list');
   const url = getDbUrl();
   const now = Date.now() + serverOffset;
+  list.hidden = false;
+  $('#chat-wrap').hidden = true;
   list.innerHTML = '';
 
   const bar = el('div', 'nick-bar');
@@ -962,8 +1013,8 @@ function renderLive() {
         toast('⚠️', 'Nieprawidłowy adres', 'Adres powinien kończyć się na .firebasedatabase.app lub .firebaseio.com');
         return;
       }
-      S.customDbUrl = val; save(); liveLoaded = false;
-      pushLive(true).then(() => fetchLive());
+      S.customDbUrl = val; save(); liveLoaded = false; chatLoaded = false;
+      pushLive(true).then(() => { fetchLive(); fetchChat(false); });
       renderLive();
     });
     list.appendChild(card);
@@ -984,7 +1035,7 @@ function renderLive() {
   const visible = liveFilter === 'on' ? livePlayers.filter(p => isPlayerOnline(p, now)) : livePlayers;
   if (!visible.length) {
     list.appendChild(el('div', 'empty', livePlayers.length
-      ? '<div>🌙</div>Nikt teraz nie gra.<br>Przełącz na „Wszyscy”, by zobaczyć ranking.'
+      ? '<div>🌙</div>Nikt teraz nie gra.<br>Przełącz na „Ranking”, by zobaczyć wszystkich.'
       : '<div>📡</div>Łączenie z bazą graczy...'));
     return;
   }
@@ -1022,17 +1073,149 @@ function renderLive() {
     list.appendChild(row);
   });
 }
+
+/* ---------- czat publiczny (Firebase Realtime Database) ---------- */
+let chatMsgs = [], chatErr = '', chatLoaded = false, chatBusy = false, lastChatPull = 0, lastChatSend = 0, lastRenderedMsgKey = '';
+const isChatOpen = () => cur === 'live' && liveFilter === 'chat';
+function fmtTime(ts) {
+  if (!ts) return '';
+  try { return new Date(ts).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; }
+}
+function updateChatBadge() {
+  const unread = chatMsgs.filter(m => m.uid !== S.uid && (m.ts || 0) > (S.lastChatTs || 0)).length;
+  const dot = $('#chat-dot'), cnt = $('#chat-cnt');
+  if (dot) dot.hidden = !unread;
+  if (cnt) { cnt.hidden = !unread; setText(cnt, unread > 9 ? '9+' : unread); }
+}
+function markChatRead() {
+  const maxTs = chatMsgs.reduce((a, m) => Math.max(a, m.ts || 0), S.lastChatTs || 0);
+  if (maxTs > (S.lastChatTs || 0)) { S.lastChatTs = maxTs; save(); }
+  updateChatBadge();
+}
+function renderChat(forceScroll) {
+  const box = $('#chat-msgs');
+  if (!box) return;
+  const nearBottom = forceScroll || (box.scrollHeight - box.scrollTop - box.clientHeight < 60);
+  const key = chatErr + '|' + chatMsgs.map(m => m.id).join(',');
+  if (key === lastRenderedMsgKey && !forceScroll) return;
+  lastRenderedMsgKey = key;
+  box.innerHTML = '';
+
+  if (chatErr) {
+    const c = el('div', 'card');
+    c.innerHTML = '<div class="card-title">💬 Czat niedostępny</div><p style="margin-bottom:0"></p>';
+    c.querySelector('p').textContent = chatErr;
+    box.appendChild(c);
+    return;
+  }
+  if (!chatMsgs.length) {
+    box.appendChild(el('div', 'empty', '<div>💬</div>Brak wiadomości.<br>Przywitaj się jako pierwszy!'));
+    return;
+  }
+  chatMsgs.forEach(m => {
+    const me = m.uid === S.uid;
+    const row = el('div', 'msg' + (me ? ' me' : ''));
+    const h = el('div', 'msg-h');
+    const who = el('span'); who.textContent = (m.nick || 'Barista') + (m.prestige > 0 ? ' ☕×' + m.prestige : '');
+    const tm = el('span'); tm.textContent = fmtTime(m.ts);
+    h.append(who, tm);
+    const tx = el('div', 'msg-t'); tx.textContent = m.text || '';
+    row.append(h, tx);
+    box.appendChild(row);
+  });
+  if (nearBottom) requestAnimationFrame(() => { box.scrollTop = box.scrollHeight; });
+}
+async function fetchChat(forceScroll) {
+  const url = getDbUrl();
+  if (!url || chatBusy) return;
+  chatBusy = true;
+  try {
+    let res = await fetch(url + '/chat.json?orderBy=%22ts%22&limitToLast=50', { cache: 'no-store' });
+    if (res.status === 400) res = await fetch(url + '/chat.json', { cache: 'no-store' });
+    if (!res.ok) {
+      chatErr = res.status === 401 || res.status === 403
+        ? 'Czat czeka na włączenie reguł "chat" w Firebase Console → Realtime Database → Rules.'
+        : 'Błąd ładowania czatu (HTTP ' + res.status + ').';
+      if (isChatOpen()) renderChat(false);
+      return;
+    }
+    const raw = await res.json();
+    chatErr = '';
+    const arr = raw ? Object.entries(raw).map(([id, m]) => Object.assign({ id }, m)).filter(m => m && m.text) : [];
+    arr.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+    const latest = arr.slice(-50);
+    const prevMax = chatMsgs.reduce((a, m) => Math.max(a, m.ts || 0), 0);
+
+    if (chatLoaded && !isChatOpen()) {
+      const freshMsgs = latest.filter(m => m.uid !== S.uid && (m.ts || 0) > Math.max(prevMax, S.lastChatTs || 0));
+      if (freshMsgs.length) {
+        const lastM = freshMsgs[freshMsgs.length - 1];
+        toast('💬', (lastM.nick || 'Gracz') + ' na czacie', lastM.text.length > 60 ? lastM.text.slice(0, 57) + '…' : lastM.text);
+      }
+    }
+    if (!chatLoaded && !S.lastChatTs && latest.length) {
+      S.lastChatTs = latest[latest.length - 1].ts || 0;
+    }
+    chatMsgs = latest;
+    chatLoaded = true;
+    if (isChatOpen()) { markChatRead(); renderChat(forceScroll); }
+    else updateChatBadge();
+  } catch (e) {
+    if (!navigator.onLine) chatErr = 'Brak internetu — czat odświeży się po powrocie online.';
+    if (isChatOpen()) renderChat(false);
+  } finally {
+    chatBusy = false;
+  }
+}
+async function sendChat(text) {
+  const url = getDbUrl();
+  if (!url) return;
+  const clean = text.trim().slice(0, 200);
+  if (!clean) return;
+  const now = Date.now();
+  if (now - lastChatSend < 1500) { toast('⏳', 'Chwileczkę', 'Odczekaj sekundę przed kolejną wiadomością.'); return; }
+  lastChatSend = now;
+  const btn = $('#chat-send'), inp = $('#chat-in');
+  btn.disabled = true;
+  try {
+    const res = await fetch(url + '/chat.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        uid: S.uid,
+        nick: S.nick,
+        text: clean,
+        prestige: S.prestige,
+        ts: { '.sv': 'timestamp' }
+      })
+    });
+    if (!res.ok) {
+      toast('⚠️', 'Nie wysłano', res.status === 401 || res.status === 403 ? 'Włącz reguły "chat" w Firebase Rules.' : 'Błąd HTTP ' + res.status);
+      return;
+    }
+    inp.value = '';
+    sfx('buy');
+    lastChatPull = Date.now();
+    await fetchChat(true);
+  } catch (e) {
+    toast('⚠️', 'Brak połączenia', 'Sprawdź internet i spróbuj ponownie.');
+  } finally {
+    btn.disabled = false;
+  }
+}
+$('#chat-form').addEventListener('submit', e => { e.preventDefault(); sendChat($('#chat-in').value); });
+$('#btn-chat').addEventListener('click', () => { showTab('live'); setLiveView('chat'); });
 $('#livefilter').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
-  liveFilter = b.dataset.f;
-  document.querySelectorAll('#livefilter button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.f === liveFilter)));
-  renderLive();
+  setLiveView(b.dataset.f);
 });
 function liveTick(now) {
   if (!getDbUrl() || document.hidden) return;
   if (now - lastPushAt >= 12000) { lastPushAt = now; pushLive(true); }
   const pullEvery = cur === 'live' ? 6000 : 18000;
   if (now - lastPullAt >= pullEvery) { lastPullAt = now; fetchLive(); }
+  const chatEvery = isChatOpen() ? 3000 : 12000;
+  if (now - lastChatPull >= chatEvery) { lastChatPull = now; fetchChat(false); }
 }
 
 /* ---------- zakładki ---------- */
@@ -1043,7 +1226,10 @@ function showTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === name)));
   document.querySelectorAll('.panel').forEach(p => { p.hidden = p.id !== 'panel-' + name; });
   if (name === 'ach') { newAch = 0; setBadge('ach', 0); }
-  if (name === 'live') { renderLive(); fetchLive(); }
+  if (name === 'live') {
+    if (liveFilter === 'chat') { markChatRead(); renderChat(true); fetchChat(true); }
+    else { renderLive(); fetchLive(); }
+  }
   slowTick();
 }
 
@@ -1078,7 +1264,7 @@ function frame() {
 }
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { save(); pushLive(false, true); }
-  else { lastPushAt = Date.now(); lastPullAt = Date.now(); pushLive(true).then(() => fetchLive()); }
+  else { lastPushAt = Date.now(); lastPullAt = Date.now(); lastChatPull = Date.now(); pushLive(true).then(() => { fetchLive(); fetchChat(false); }); }
 });
 window.addEventListener('pagehide', () => { save(); pushLive(false, true); });
 
@@ -1235,8 +1421,8 @@ buildGen(); buildAch(); renderBuffs(true); refreshAll();
 const awaySec = (Date.now() - S.last) / 1000;
 if (awaySec > 2) away(awaySec);
 if (getDbUrl()) {
-  lastPushAt = Date.now(); lastPullAt = Date.now();
-  pushLive(true).then(() => fetchLive());
+  lastPushAt = Date.now(); lastPullAt = Date.now(); lastChatPull = Date.now();
+  pushLive(true).then(() => { fetchLive(); fetchChat(false); });
   if (!S.nickSet && $('#modal').hidden) setTimeout(() => { if ($('#modal').hidden) promptNick(true); }, 600);
 }
 lastNow = Date.now();

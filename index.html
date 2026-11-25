@@ -4,7 +4,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="app-version" content="2.0.1">
+<meta name="app-version" content="2.1.0">
 <meta name="theme-color" content="#1f140e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,8 +55,12 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .icon-btn{position:relative;width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);display:grid;place-items:center;font-size:15.5px;transition:transform .12s,background .2s}
 .icon-btn:active{transform:scale(.92);background:rgba(255,255,255,.12)}
 .icon-btn[hidden]{display:none}
-.ic-dot{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;background:#f97316;box-shadow:0 0 0 2px #2a1a12}
-.ic-dot[hidden]{display:none}
+.ic-cnt{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#f97316;color:#fff;font-size:10px;font-weight:900;line-height:17px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.45),0 0 0 2px #2a1a12;animation:pop .25s cubic-bezier(.2,.9,.3,1.3)}
+.ic-cnt[hidden]{display:none}
+.chat-peek{position:absolute;top:calc(env(safe-area-inset-top) + 52px);right:14px;z-index:18;max-width:min(74vw,270px);padding:8px 12px;border-radius:14px 4px 14px 14px;background:rgba(255,250,243,.97);color:var(--ink);text-align:left;box-shadow:0 12px 28px rgba(0,0,0,.42),0 0 0 1px rgba(212,135,58,.3);animation:pop .28s cubic-bezier(.2,.9,.3,1.25)}
+.chat-peek[hidden]{display:none}
+.chat-peek b{display:block;font-size:11.5px;color:var(--caramel-2);margin-bottom:2px}
+.chat-peek span{display:block;font-size:12.5px;line-height:1.3;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .score{text-align:center;padding:2px 14px 0}
 .count{font-size:clamp(36px,11vw,54px);font-weight:850;letter-spacing:-.035em;font-variant-numeric:tabular-nums;line-height:1.04;text-shadow:0 2px 0 rgba(0,0,0,.28)}
@@ -159,7 +163,8 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .beta-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:10px 13px;border-radius:15px;background:linear-gradient(135deg,#3d2618,#24150d);color:#fde68a;font-size:13px;font-weight:800;box-shadow:0 6px 16px -8px rgba(30,15,5,.7),inset 0 1px 0 rgba(255,255,255,.1);flex:none;text-align:left}
 .beta-btn:active{transform:scale(.98)}
 .beta-btn small{color:#d8be9f;font-weight:700;font-size:11px;display:block;margin-top:1px}
-.player{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:#fffaf3;box-shadow:var(--card-shadow);flex:none}
+.player{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:#fffaf3;box-shadow:var(--card-shadow);flex:none;width:100%;text-align:left;transition:transform .12s}
+.player:active{transform:scale(.98)}
 .player.me{background:linear-gradient(180deg,#fffdf9,#fdf3e4)}
 .player.is-on{box-shadow:inset 3px 0 0 #16a34a,var(--card-shadow)}
 .rank{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:850;font-size:14px;background:#f1e5d4;color:var(--ink-2);font-variant-numeric:tabular-nums}
@@ -176,16 +181,46 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .cfg-input{width:100%;padding:10px 12px;border-radius:12px;border:1.5px solid #dfd0bc;background:#fff;color:var(--ink);font:inherit;font-size:16px;margin-bottom:8px;-webkit-user-select:text;user-select:text}
 .cfg-input:focus{outline:none;border-color:var(--caramel)}
 
-.chat-wrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px}
+.lb-cats{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;flex:none}
+.lb-cat{padding:6px 2px;border-radius:10px;background:#eadcc8;color:var(--ink-2);font-size:11px;font-weight:800;white-space:nowrap;text-align:center;transition:background .15s,color .15s}
+.lb-cat[aria-pressed="true"]{background:var(--ink);color:#fffaf3;box-shadow:0 3px 8px -3px rgba(42,27,18,.5)}
+
+.crew-bar{display:flex;align-items:center;justify-content:space-around;gap:6px;padding:8px 10px;border-radius:14px;background:linear-gradient(135deg,#3a2417,#22150e);color:#f5e6d2;font-size:11px;text-align:center;flex:none}
+.crew-bar b{display:block;font-size:13.5px;color:#fde68a;font-variant-numeric:tabular-nums;margin-top:1px}
+.rival-bar{padding:9px 12px;border-radius:14px;background:linear-gradient(135deg,#fff8ec,#f6e6cd);border:1px solid #e6cfa8;font-size:12px;color:var(--ink);flex:none}
+.rival-bar b{color:#9a5216}
+.rival-prog{height:5px;border-radius:5px;background:#e8d6bc;margin-top:6px;overflow:hidden}
+.rival-prog i{display:block;height:100%;background:linear-gradient(90deg,var(--caramel),var(--gold));border-radius:5px;transition:width .35s}
+
+.chart-card{background:#fffaf3;border-radius:16px;padding:11px 12px;box-shadow:var(--card-shadow);flex:none}
+.chart-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);margin-bottom:8px}
+.chart-row{display:grid;grid-template-columns:76px 1fr auto;align-items:center;gap:8px;margin-bottom:5px;font-size:11.5px;font-variant-numeric:tabular-nums}
+.chart-row:last-child{margin-bottom:0}
+.chart-nm{font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-bar{height:9px;border-radius:6px;background:#efe3d2;overflow:hidden}
+.chart-bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#d4873a,#f2c14e);transition:width .35s}
+.chart-row.me .chart-bar i{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.chart-val{font-weight:800;color:var(--ink-2);white-space:nowrap}
+
+.prof-cmp{padding:9px 11px;border-radius:12px;background:#f4e9da;font-size:12.5px;color:var(--ink);line-height:1.45;margin-top:10px;text-align:left}
+
+.chat-wrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px}
 .chat-wrap[hidden]{display:none}
 .chat-msgs{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;display:flex;flex-direction:column;gap:7px;padding:2px 2px 4px;scrollbar-width:none}
 .chat-msgs::-webkit-scrollbar{display:none}
 .msg{max-width:86%;align-self:flex-start;padding:8px 11px;border-radius:15px 15px 15px 5px;background:#fffaf3;color:var(--ink);box-shadow:0 1px 2px rgba(60,35,20,.14);flex:none}
 .msg.me{align-self:flex-end;border-radius:15px 15px 5px 15px;background:linear-gradient(180deg,#e09445,var(--caramel-2));color:#fff;box-shadow:0 3px 10px -4px rgba(185,110,40,.65)}
+.msg.card-msg{border:1.5px solid #f2c14e;background:linear-gradient(135deg,#fffbf0,#faecc8);color:var(--ink)}
+.msg.me.card-msg{background:linear-gradient(135deg,#c97a2e,#9a5718);color:#fff;border-color:#fde68a}
 .msg-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:800;margin-bottom:2px;color:var(--ink-2)}
 .msg.me .msg-h{color:rgba(255,255,255,.82)}
 .msg-t{font-size:13.5px;line-height:1.38;word-break:break-word;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
-.chat-form{display:flex;gap:6px;align-items:center;flex:none;padding-top:2px}
+.quick-bar{display:flex;gap:5px;align-items:center;overflow-x:auto;scrollbar-width:none;flex:none;padding:1px 0}
+.quick-bar::-webkit-scrollbar{display:none}
+.q-em{flex:none;height:30px;padding:0 9px;border-radius:9px;background:#ede0ce;color:var(--ink);font-size:14px;display:inline-flex;align-items:center;justify-content:center;transition:transform .1s}
+.q-em:active{transform:scale(.9)}
+.q-em.share{margin-left:auto;background:linear-gradient(180deg,#3d2618,#26160d);color:#fde68a;font-size:11.5px;font-weight:800;gap:4px;padding:0 10px}
+.chat-form{display:flex;gap:6px;align-items:center;flex:none;padding-top:1px}
 .chat-in{flex:1;min-width:0;padding:9px 12px;border-radius:13px;border:1.5px solid #dfd0bc;background:#fff;color:var(--ink);font:inherit;font-size:16px;line-height:1.25;-webkit-user-select:text;user-select:text}
 .chat-in:focus{outline:none;border-color:var(--caramel)}
 .chat-send{flex:none;padding:10px 14px;border-radius:13px;background:linear-gradient(180deg,#e09445,var(--caramel-2));color:#fff;font-weight:800;font-size:14px;box-shadow:0 4px 10px -4px rgba(185,110,40,.7)}
@@ -299,10 +334,11 @@ a.btn{display:block;text-align:center;text-decoration:none}
     <div class="brand"><i></i>Kawowy Klikacz <span class="season-tag">S1</span></div>
     <div class="top-right">
       <button id="btn-live" class="live-pill" type="button" aria-label="Gracze online" hidden=""><i class="dot on"></i><span id="live-cnt">0</span></button>
-      <button id="btn-chat" class="icon-btn" type="button" aria-label="Czat publiczny" hidden="">💬<i class="ic-dot" id="chat-dot" hidden=""></i></button>
+      <button id="btn-chat" class="icon-btn" type="button" aria-label="Czat publiczny" hidden="">💬<span class="ic-cnt" id="chat-dot" hidden=""></span></button>
       <button id="btn-sound" class="icon-btn" type="button" aria-label="Dźwięk">🔊</button>
     </div>
   </header>
+  <button id="chat-peek" class="chat-peek" type="button" hidden=""><b id="cp-who"></b><span id="cp-txt"></span></button>
 
   <section class="score" aria-live="off">
     <h1 id="count" class="count" style="margin:0">0</h1>
@@ -404,6 +440,15 @@ a.btn{display:block;text-align:center;text-decoration:none}
       <div id="live-list" class="list"></div>
       <div id="chat-wrap" class="chat-wrap" hidden="">
         <div id="chat-msgs" class="chat-msgs"></div>
+        <div id="quick-bar" class="quick-bar">
+          <button type="button" class="q-em" data-em="☕">☕</button>
+          <button type="button" class="q-em" data-em="🔥">🔥</button>
+          <button type="button" class="q-em" data-em="😂">😂</button>
+          <button type="button" class="q-em" data-em="👏">👏</button>
+          <button type="button" class="q-em" data-em="⚡">⚡</button>
+          <button type="button" class="q-em" data-em="👀">👀</button>
+          <button type="button" class="q-em share" id="btn-share-score">📢 Wynik</button>
+        </div>
         <form id="chat-form" class="chat-form" autocomplete="off">
           <input id="chat-in" class="chat-in" type="text" maxlength="200" placeholder="Napisz do graczy...">
           <button id="chat-send" class="chat-send" type="submit">Wyślij</button>
@@ -420,8 +465,8 @@ a.btn{display:block;text-align:center;text-decoration:none}
       <div class="panel-head"><span>Więcej · Sezon 1</span><span class="note" id="more-head"></span></div>
       <div class="list">
         <div class="card" id="card-export">
-          <div class="card-title">📦 Wgraj Sezon 1 (v2.0) na GitHub</div>
-          <p>Skopiuj czysty kod i wklej do <code>index.html</code> na GitHubie — gracze zaktualizują się automatycznie!</p>
+          <div class="card-title">📦 Wgraj v2.1 (Sezon 1) na GitHub</div>
+          <p>Skopiuj czysty kod i wklej do <code>index.html</code> na GitHubie — gracze zaktualizują się automatycznie bez utraty punktów!</p>
           <button id="btn-copy-html" type="button" class="btn primary wide" style="margin-top:0">📋 Skopiuj czysty kod index.html</button>
           <button id="btn-dl-zip" type="button" class="btn ghost wide">⬇️ Pobierz paczkę kawowy-klikacz.zip</button>
         </div>
@@ -459,7 +504,7 @@ a.btn{display:block;text-align:center;text-decoration:none}
             <div><dt>Złote ziarna</dt><dd id="st-gold">0</dd></div>
             <div><dt>Zlecenia 🎯</dt><dd id="st-quests">0</dd></div>
             <div><dt>Mnożnik produkcji</dt><dd id="st-mul">×1</dd></div>
-            <div><dt>Czas gry</dt><dd id="st-time">0 s</dd></div>
+            <div><dt>Aktywny czas gry</dt><dd id="st-time">0 s</dd></div>
           </dl>
         </div>
 
@@ -470,7 +515,7 @@ a.btn{display:block;text-align:center;text-decoration:none}
           <button id="btn-nick" type="button" class="btn ghost wide">✏️ Zmień nick (<span id="set-nick">Barista</span>)</button>
           <button id="btn-how-install" type="button" class="btn ghost wide">📲 Jak dodać ikonę na telefon?</button>
           <button id="btn-install" type="button" class="btn primary wide" hidden="">📲 Zainstaluj aplikację</button>
-          <p class="hint">Wersja <b>v2.0 (Sezon 1)</b>. Gra sama wykrywa i pobiera kolejne aktualizacje w tle.</p>
+          <p class="hint">Wersja <b>v2.1 (Sezon 1)</b>. Gra sama wykrywa i pobiera kolejne aktualizacje w tle.</p>
           <button id="btn-reset" type="button" class="btn ghost wide">Zresetuj mój zapis</button>
         </div>
       </div>
@@ -522,7 +567,7 @@ if (location.search && /[?&]v=/.test(location.search) && history.replaceState) {
   try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
 }
 
-const APP_VER = '2.0.1';
+const APP_VER = '2.1.0';
 const SEASON = 2;
 const MIN_RANK_TAPS = 50;
 const $ = s => document.querySelector(s);
@@ -723,7 +768,7 @@ const KEY = 'kawowy-klikacz-s2';
 const makeUid = () => 'p_' + (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '').slice(0, 12) : Math.random().toString(36).slice(2, 14));
 const makeNick = () => 'Barista ' + (10 + Math.floor(Math.random() * 89));
 const fresh = () => ({
-  season: SEASON, beans: 0, total: 0, lifetime: 0, taps: 0, lifeTaps: 0, crits: 0,
+  season: SEASON, beans: 0, total: 0, lifetime: 0, taps: 0, lifeTaps: 0, crits: 0, playSec: 0,
   owned: {}, upg: {}, pshop: {}, ach: {}, golden: 0, prestige: 0, crystals: 0,
   questIdx: 0, skin: 'classic', buffs: [], last: Date.now(), start: Date.now(),
   sound: true, vib: true, mode: 1, uid: makeUid(), nick: makeNick(), nickSet: false,
@@ -736,7 +781,11 @@ function load() {
   try {
     const r = localStorage.getItem(KEY);
     if (r) {
-      S = Object.assign(fresh(), JSON.parse(r));
+      const parsed = JSON.parse(r);
+      S = Object.assign(fresh(), parsed);
+      if (typeof parsed.playSec !== 'number' && (S.lifeTaps || 0) > 0) {
+        S.playSec = Math.min(Math.max(0, Math.floor((Date.now() - (S.start || Date.now())) / 1000)), S.lifeTaps * 2);
+      }
     } else {
       // Pierwsze wejście do Sezonu 1: przenieś nick, uid i ustawienia ze starego zapisu z Bety!
       const oldRaw = localStorage.getItem(OLD_KEY);
@@ -843,6 +892,8 @@ function sfx(k) {
     else if (k === 'fail') tone(150, 0, .12, 'square', .035);
     else if (k === 'gold') [784, 988, 1175, 1568].forEach((f, i) => tone(f, i * .07, .2, 'triangle', .08));
     else if (k === 'ach') [523, 659, 784].forEach((f, i) => tone(f, i * .09, .24, 'sine', .09));
+    else if (k === 'chat') { tone(587, 0, .07, 'sine', .055); tone(880, .06, .11, 'sine', .045); }
+    else if (k === 'rival') { tone(392, 0, .09, 'triangle', .06); tone(311, .08, .14, 'triangle', .05); }
   } catch (e) {}
 }
 function buzz(p) { if (S.vib && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} }
@@ -1209,7 +1260,7 @@ function refreshMore() {
   setText($('#st-gold'), S.golden);
   setText($('#st-quests'), S.questIdx + ' / ' + QUESTS.length);
   setText($('#st-mul'), '×' + fmt(globalMul() * buffMul('cps')));
-  setText($('#st-time'), fmtDur((Date.now() - S.start) / 1000));
+  setText($('#st-time'), fmtDur(S.playSec || 0));
   const pts = presPts(), gain = Math.max(0, pts - S.prestige);
   setText($('#pres-have'), S.prestige);
   setText($('#pres-gain'), gain > 0 ? '+' + gain : '0');
@@ -1261,8 +1312,9 @@ $('#btn-install').addEventListener('click', async () => {
   deferredInstall = null; $('#btn-install').hidden = true;
 });
 
-/* ---------- online, ranking Sezonu 1 i czat publiczny (Firebase RTDB) ---------- */
+/* ---------- online, 5 tabel rankingu, wykres, rywalizacja i czat (Firebase RTDB) ---------- */
 const ONLINE_TTL = 35000;
+const esc = s => String(s || '').replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]));
 const DEVICE = (() => {
   const ua = navigator.userAgent || '';
   if (/iPhone/.test(ua)) return 'iPhone';
@@ -1272,8 +1324,18 @@ const DEVICE = (() => {
   if (/Windows/.test(ua)) return 'Windows';
   return 'Web';
 })();
+
+const LB_CATS = [
+  { id: 'beans', n: '🫘 Ziarna',   title: 'Ziarna łącznie',   val: p => p.lifetime || 0,                 fmt: v => fmtBig(v),                     sub: p => fmt(p.cps || 0) + '/s',                      unit: 'ziaren' },
+  { id: 'taps',  n: '👆 Klik',     title: 'Kliknięcia',       val: p => p.taps || 0,                     fmt: v => Math.floor(v).toLocaleString('pl-PL'), sub: p => '⚡ ' + (p.crits || 0) + ' kryt',    unit: 'kliknięć' },
+  { id: 'cps',   n: '⚡ /s',       title: 'Produkcja /s',     val: p => p.cps || 0,                      fmt: v => fmt(v) + '/s',                  sub: p => fmtBig(p.lifetime || 0) + ' ziaren',         unit: '/s' },
+  { id: 'time',  n: '⏱️ Czas',     title: 'Aktywny czas gry', val: p => p.playSec || 0,                  fmt: v => fmtDur(v),                      sub: p => (p.taps || 0).toLocaleString('pl-PL') + ' klik', unit: '' },
+  { id: 'ach',   n: '🏆 Trofea',   title: 'Trofea i Prestiż', val: p => (p.ach || 0) * 1000 + (p.prestige || 0), fmt: (v, p) => '🏆 ' + (p.ach || 0), sub: p => p.prestige > 0 ? '☕ prestiż ×' + p.prestige : fmtBig(p.lifetime || 0), unit: 'trofeów' }
+];
+let lbCat = 'beans';
 let liveFilter = 'all', livePlayers = [], liveErr = '', serverOffset = 0, liveLoaded = false;
-let prevOnline = new Set(), lastPushAt = 0, lastPullAt = 0, liveBusy = false;
+let prevOnline = new Set(), prevPrestigeMap = new Map(), myPrevRank = null;
+let lastPushAt = 0, lastPullAt = 0, liveBusy = false;
 
 const DEFAULT_DB_URL = 'https://kawowy-klikacz-default-rtdb.europe-west1.firebasedatabase.app';
 function getDbUrl() {
@@ -1322,13 +1384,18 @@ async function pushLive(online, keepalive, forceClear) {
     lifetime: Math.floor(S.lifetime),
     cps: Math.round(cps() * 10) / 10,
     taps: S.lifeTaps,
+    crits: S.crits || 0,
+    playSec: Math.floor(S.playSec || 0),
+    quests: S.questIdx || 0,
     prestige: S.prestige,
     ach: achCount(),
+    skin: S.skin || 'classic',
     device: DEVICE,
     online: !forceClear && !!online,
     seen: { '.sv': 'timestamp' }
   } : {
     season: SEASON,
+    playSec: Math.floor(S.playSec || 0),
     online: false,
     seen: { '.sv': 'timestamp' }
   };
@@ -1377,14 +1444,34 @@ async function fetchLive() {
 
     const nowOnline = new Set();
     arr.forEach(p => { if (isPlayerOnline(p, now)) nowOnline.add(p.id); });
+    const myRank = arr.findIndex(p => p.id === S.uid);
+
     if (liveLoaded) {
+      // Powiadomienia: ktoś wszedł online / zrobił prestiż
       arr.forEach(p => {
         if (p.id !== S.uid && nowOnline.has(p.id) && !prevOnline.has(p.id)) {
           toast('🟢', p.nick + ' gra teraz!', fmtBig(p.lifetime || 0) + ' ziaren · ' + fmt(p.cps || 0) + '/s');
         }
+        const oldPres = prevPrestigeMap.get(p.id);
+        if (p.id !== S.uid && typeof oldPres === 'number' && (p.prestige || 0) > oldPres) {
+          toast('🔁', p.nick + ' zrobił Nowe Otwarcie!', 'Ma już prestiż ×' + p.prestige);
+        }
       });
+      // Powiadomienia rywalizacji: ktoś Cię wyprzedził albo awansowałeś!
+      if (myRank >= 0 && myPrevRank !== null && myRank !== myPrevRank) {
+        if (myRank > myPrevRank) {
+          const above = arr[myRank - 1];
+          toast('🏃', (above ? above.nick : 'Ktoś') + ' Cię wyprzedził!', 'Spadasz na #' + (myRank + 1) + ' w rankingu ziaren!');
+          sfx('rival');
+        } else {
+          toast('🚀', 'Awans na #' + (myRank + 1) + '!', 'Pnąc się w górę rankingu Sezonu 1!');
+          sfx('ach');
+        }
+      }
     }
     prevOnline = nowOnline;
+    prevPrestigeMap = new Map(arr.map(p => [p.id, p.prestige || 0]));
+    if (myRank >= 0) myPrevRank = myRank;
     liveLoaded = true;
     updateOnlineBadges(nowOnline.size);
     if (cur === 'live') renderLive();
@@ -1394,6 +1481,34 @@ async function fetchLive() {
   } finally {
     liveBusy = false;
   }
+}
+function showPlayerProfile(p, rankIdx, cat) {
+  const now = Date.now() + serverOffset;
+  const on = isPlayerOnline(p, now);
+  const me = p.id === S.uid;
+  const statusTxt = on ? '<span style="color:#15803d;font-weight:800">● Gra teraz</span>' : (p.seen ? 'Ostatnio: ' + fmtAgo(now - p.seen) : 'Offline');
+  let cmpHtml = '';
+  if (!me) {
+    const dBeans = (p.lifetime || 0) - S.lifetime;
+    const dTaps = (p.taps || 0) - S.lifeTaps;
+    const bTxt = dBeans > 0 ? 'Ma o <b>' + fmtBig(dBeans) + '</b> ziaren więcej' : (dBeans < 0 ? 'Wyprzedzasz o <b>' + fmtBig(-dBeans) + '</b> ziaren' : 'Identyczna liczba ziaren');
+    const tTxt = dTaps > 0 ? 'Kliknął o <b>' + dTaps.toLocaleString('pl-PL') + '</b> razy więcej' : (dTaps < 0 ? 'Kliknąłeś o <b>' + (-dTaps).toLocaleString('pl-PL') + '</b> razy więcej' : 'Tyle samo kliknięć');
+    cmpHtml = '<div class="prof-cmp">⚔️ <b>Porównanie z Tobą:</b><br>• ' + bTxt + '<br>• ' + tTxt + '</div>';
+  }
+  modal({
+    ic: rankIdx === 0 ? '👑' : (p.og ? '🎖️' : '☕'),
+    title: (p.nick || 'Barista') + (p.og ? ' (OG)' : ''),
+    body: '<div style="font-size:12.5px;margin-bottom:10px">' + statusTxt + ' · ' + esc(p.device || 'Web') + ' · <b>#' + (rankIdx + 1) + '</b> (' + esc(cat.title) + ')</div>' +
+      '<dl class="stats" style="text-align:left">' +
+        '<div><dt>Ziarna łącznie</dt><dd>' + fmtBig(p.lifetime || 0) + '</dd></div>' +
+        '<div><dt>Produkcja /s</dt><dd>' + fmt(p.cps || 0) + '/s</dd></div>' +
+        '<div><dt>Kliknięcia</dt><dd>' + (p.taps || 0).toLocaleString('pl-PL') + '</dd></div>' +
+        '<div><dt>Aktywny czas</dt><dd>' + fmtDur(p.playSec || 0) + '</dd></div>' +
+        '<div><dt>Trofea / Prestiż</dt><dd>🏆 ' + (p.ach || 0) + ' · ☕×' + (p.prestige || 0) + '</dd></div>' +
+        '<div><dt>Krytyki / Zlecenia</dt><dd>⚡ ' + (p.crits || 0) + ' · 🎯 ' + (p.quests || 0) + '</dd></div>' +
+      '</dl>' + cmpHtml,
+    ok: 'Zamknij'
+  });
 }
 function updateOnlineBadges(count) {
   const hasDb = !!getDbUrl();
@@ -1410,6 +1525,7 @@ function setLiveView(mode) {
   $('#live-list').hidden = isChat;
   $('#chat-wrap').hidden = !isChat;
   if (isChat) {
+    hideChatPeek();
     setText($('#live-head'), 'Czat');
     markChatRead();
     renderChat(true);
@@ -1460,23 +1576,96 @@ function renderLive() {
   }
 
   const onlineCount = livePlayers.filter(p => isPlayerOnline(p, now)).length;
-  setText($('#live-head'), onlineCount + ' online · ' + livePlayers.length + ' w S1');
+  setText($('#live-head'), onlineCount + '/' + livePlayers.length + ' online');
   updateOnlineBadges(onlineCount);
 
-  const visible = liveFilter === 'on' ? livePlayers.filter(p => isPlayerOnline(p, now)) : livePlayers;
+  if (!livePlayers.length) {
+    list.appendChild(el('div', 'empty', '<div>🚀</div>Sezon 1 właśnie wystartował!<br>Kliknij ' + MIN_RANK_TAPS + ' razy, aby pojawić się w rankingu.'));
+    return;
+  }
+
+  // Globalne statystyki całej ekipy S1
+  const sumBeans = livePlayers.reduce((s, p) => s + (p.lifetime || 0), 0);
+  const sumTaps = livePlayers.reduce((s, p) => s + (p.taps || 0), 0);
+  const sumCps = livePlayers.reduce((s, p) => s + (p.cps || 0), 0);
+  const crew = el('div', 'crew-bar');
+  crew.innerHTML = '<div><span>🌍 Ziarna ekipy</span><b>' + fmt(sumBeans) + '</b></div>' +
+    '<div><span>👆 Kliknięcia</span><b>' + fmt(sumTaps) + '</b></div>' +
+    '<div><span>⚡ Moc ekipy</span><b>' + fmt(sumCps) + '/s</b></div>';
+  list.appendChild(crew);
+
+  // Przełącznik 5 kategorii tabel
+  const cat = LB_CATS.find(c => c.id === lbCat) || LB_CATS[0];
+  const catBar = el('div', 'lb-cats');
+  LB_CATS.forEach(c => {
+    const cb = el('button', 'lb-cat');
+    cb.type = 'button'; cb.textContent = c.n;
+    cb.setAttribute('aria-pressed', String(c.id === lbCat));
+    cb.addEventListener('click', () => { lbCat = c.id; renderLive(); });
+    catBar.appendChild(cb);
+  });
+  list.appendChild(catBar);
+
+  // Sortowanie w wybranej kategorii
+  const sorted = livePlayers.slice().sort((a, b) => (cat.val(b) - cat.val(a)) || ((b.lifetime || 0) - (a.lifetime || 0)));
+
+  // Pasek rywalizacji „Ile brakuje do kolejnego miejsca”
+  const myIdx = sorted.findIndex(p => p.id === S.uid);
+  if (myIdx > 0) {
+    const target = sorted[myIdx - 1], meObj = sorted[myIdx];
+    const diff = Math.max(0, cat.val(target) - cat.val(meObj));
+    const pct = cat.val(target) > 0 ? Math.min(100, (cat.val(meObj) / cat.val(target)) * 100) : 100;
+    let eta = '';
+    if (cat.id === 'beans' && cps() > 0 && diff > 0) {
+      const sec = diff / cps();
+      if (sec < 86400 * 3) eta = ' (~' + fmtDur(sec) + ')';
+    }
+    const diffTxt = cat.id === 'ach' ? (Math.max(1, (target.ach || 0) - (meObj.ach || 0)) + ' trof.') : cat.fmt(diff, target);
+    const rv = el('div', 'rival-bar');
+    rv.innerHTML = '🎯 Do wyprzedzenia <b>' + esc(target.nick || 'Gracz') + '</b> (#' + myIdx + '): brakuje <b>' + diffTxt + '</b>' + eta +
+      '<div class="rival-prog"><i style="width:' + pct.toFixed(1) + '%"></i></div>';
+    list.appendChild(rv);
+  } else if (myIdx === 0 && sorted.length > 1) {
+    const second = sorted[1], meObj = sorted[0];
+    const lead = Math.max(0, cat.val(meObj) - cat.val(second));
+    const leadTxt = cat.id === 'ach' ? ((meObj.ach || 0) - (second.ach || 0) + ' trof.') : cat.fmt(lead, meObj);
+    const rv = el('div', 'rival-bar');
+    rv.innerHTML = '👑 Prowadzisz w kategorii <b>' + esc(cat.title) + '</b>! Przewaga nad <b>' + esc(second.nick || 'Gracz') + '</b>: <b>+' + leadTxt + '</b>';
+    list.appendChild(rv);
+  }
+
+  // Mini-wykres słupkowy Top 5 (tylko gdy jest >= 2 graczy i widok Ranking)
+  const top5 = sorted.slice(0, 5);
+  const maxVal = Math.max(1, cat.val(top5[0] || {}));
+  if (liveFilter === 'all' && top5.length >= 2) {
+    const ch = el('div', 'chart-card');
+    ch.innerHTML = '<div class="chart-head"><span>📊 Wykres Top ' + top5.length + ' · ' + esc(cat.title) + '</span><span>Kliknij gracza po profil</span></div>';
+    top5.forEach(p => {
+      const v = cat.val(p);
+      const w = Math.max(4, Math.min(100, (v / maxVal) * 100));
+      const row = el('div', 'chart-row' + (p.id === S.uid ? ' me' : ''));
+      const nm = el('div', 'chart-nm'); nm.textContent = p.nick || 'Barista';
+      const br = el('div', 'chart-bar', '<i style="width:' + w.toFixed(1) + '%"></i>');
+      const vl = el('div', 'chart-val'); vl.textContent = cat.fmt(v, p);
+      row.append(nm, br, vl);
+      ch.appendChild(row);
+    });
+    list.appendChild(ch);
+  }
+
+  const visible = liveFilter === 'on' ? sorted.filter(p => isPlayerOnline(p, now)) : sorted;
   if (!visible.length) {
-    list.appendChild(el('div', 'empty', livePlayers.length
-      ? '<div>🌙</div>Nikt teraz nie gra.<br>Przełącz na „Ranking”, by zobaczyć tabelę Sezonu 1.'
-      : '<div>🚀</div>Sezon 1 właśnie wystartował!<br>Kliknij ' + MIN_RANK_TAPS + ' razy, aby pojawić się w rankingu.'));
+    list.appendChild(el('div', 'empty', '<div>🌙</div>Nikt teraz nie gra.<br>Przełącz na „Ranking”, by zobaczyć tabelę Sezonu 1.'));
     return;
   }
 
   const medals = ['🥇', '🥈', '🥉'];
   visible.forEach(p => {
-    const rankIdx = livePlayers.indexOf(p);
+    const rankIdx = sorted.indexOf(p);
     const on = isPlayerOnline(p, now);
     const me = p.id === S.uid;
-    const row = el('div', 'player' + (on ? ' is-on' : '') + (me ? ' me' : ''));
+    const row = el('button', 'player' + (on ? ' is-on' : '') + (me ? ' me' : ''));
+    row.type = 'button';
 
     const r = el('div', 'rank' + (rankIdx < 3 ? ' top' : ''));
     r.textContent = rankIdx < 3 ? medals[rankIdx] : '#' + (rankIdx + 1);
@@ -1497,27 +1686,42 @@ function renderLive() {
     mid.append(nm, sub);
 
     const sc = el('div', 'p-score');
-    const b1 = el('b'); b1.textContent = fmtBig(p.lifetime || 0);
-    const s1 = el('span'); s1.textContent = fmt(p.cps || 0) + '/s';
+    const b1 = el('b'); b1.textContent = cat.fmt(cat.val(p), p);
+    const s1 = el('span'); s1.textContent = cat.sub(p);
     sc.append(b1, s1);
 
     row.append(r, mid, sc);
+    row.addEventListener('click', () => showPlayerProfile(p, rankIdx, cat));
     list.appendChild(row);
   });
 }
 
-/* ---------- czat publiczny ---------- */
-let chatMsgs = [], chatErr = '', chatLoaded = false, chatBusy = false, lastChatPull = 0, lastChatSend = 0, lastRenderedMsgKey = '';
+/* ---------- czat publiczny (z chmurką podglądu i szybkimi emotkami) ---------- */
+let chatMsgs = [], chatErr = '', chatLoaded = false, chatBusy = false, lastChatPull = 0, lastChatSend = 0, lastRenderedMsgKey = '', peekTimer = null;
 const isChatOpen = () => cur === 'live' && liveFilter === 'chat';
 function fmtTime(ts) {
   if (!ts) return '';
   try { return new Date(ts).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; }
 }
+function showChatPeek(nick, text) {
+  const pk = $('#chat-peek'); if (!pk) return;
+  setText($('#cp-who'), '💬 ' + (nick || 'Gracz'));
+  setText($('#cp-txt'), text || '');
+  pk.hidden = false;
+  clearTimeout(peekTimer);
+  peekTimer = setTimeout(() => { pk.hidden = true; }, 4500);
+}
+function hideChatPeek() {
+  const pk = $('#chat-peek');
+  if (pk) pk.hidden = true;
+  clearTimeout(peekTimer);
+}
 function updateChatBadge() {
   const unread = chatMsgs.filter(m => m.uid !== S.uid && (m.ts || 0) > (S.lastChatTs || 0)).length;
+  const label = unread > 9 ? '9+' : String(unread);
   const dot = $('#chat-dot'), cnt = $('#chat-cnt');
-  if (dot) dot.hidden = !unread;
-  if (cnt) { cnt.hidden = !unread; setText(cnt, unread > 9 ? '9+' : unread); }
+  if (dot) { dot.hidden = !unread; setText(dot, label); }
+  if (cnt) { cnt.hidden = !unread; setText(cnt, label); }
 }
 function markChatRead() {
   const maxTs = chatMsgs.reduce((a, m) => Math.max(a, m.ts || 0), S.lastChatTs || 0);
@@ -1545,7 +1749,8 @@ function renderChat(forceScroll) {
   }
   chatMsgs.forEach(m => {
     const me = m.uid === S.uid;
-    const row = el('div', 'msg' + (me ? ' me' : ''));
+    const isCard = typeof m.text === 'string' && m.text.startsWith('📊 ');
+    const row = el('div', 'msg' + (me ? ' me' : '') + (isCard ? ' card-msg' : ''));
     const h = el('div', 'msg-h');
     const who = el('span'); who.textContent = (m.nick || 'Barista') + (m.og ? ' 🎖️' : '') + (m.prestige > 0 ? ' ☕×' + m.prestige : '');
     const tm = el('span'); tm.textContent = fmtTime(m.ts);
@@ -1579,7 +1784,8 @@ async function fetchChat(forceScroll) {
       const freshMsgs = latest.filter(m => m.uid !== S.uid && (m.ts || 0) > Math.max(prevMax, S.lastChatTs || 0));
       if (freshMsgs.length) {
         const lastM = freshMsgs[freshMsgs.length - 1];
-        toast('💬', (lastM.nick || 'Gracz') + ' na czacie', lastM.text.length > 60 ? lastM.text.slice(0, 57) + '…' : lastM.text);
+        showChatPeek(lastM.nick || 'Gracz', lastM.text);
+        sfx('chat');
       }
     }
     if (!chatLoaded && !S.lastChatTs && latest.length) S.lastChatTs = latest[latest.length - 1].ts || 0;
@@ -1630,7 +1836,20 @@ async function sendChat(text) {
   }
 }
 $('#chat-form').addEventListener('submit', e => { e.preventDefault(); sendChat($('#chat-in').value); });
-$('#btn-chat').addEventListener('click', () => { showTab('live'); setLiveView('chat'); });
+$('#quick-bar').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'btn-share-score') {
+    const summary = '📊 Wynik: ' + fmtBig(S.lifetime) + ' ziaren · ' + fmt(cps()) + '/s · ' + S.lifeTaps.toLocaleString('pl-PL') + ' klik · ⏱️ ' + fmtDur(S.playSec || 0) + ' · 🏆 ' + achCount();
+    sendChat(summary);
+    return;
+  }
+  const em = b.dataset.em; if (!em) return;
+  const inp = $('#chat-in');
+  if (!inp.value.trim()) sendChat(em);
+  else { inp.value = (inp.value + ' ' + em).slice(0, 200); inp.focus(); }
+});
+$('#btn-chat').addEventListener('click', () => { hideChatPeek(); showTab('live'); setLiveView('chat'); });
+$('#chat-peek').addEventListener('click', () => { hideChatPeek(); showTab('live'); setLiveView('chat'); });
 $('#livefilter').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setLiveView(b.dataset.f); });
 function liveTick(now) {
   if (!getDbUrl() || document.hidden) return;
@@ -1650,7 +1869,7 @@ function showTab(name) {
   document.querySelectorAll('.panel').forEach(p => { p.hidden = p.id !== 'panel-' + name; });
   if (name === 'ach') { newAch = 0; setBadge('ach', 0); }
   if (name === 'live') {
-    if (liveFilter === 'chat') { markChatRead(); renderChat(true); fetchChat(true); }
+    if (liveFilter === 'chat') { hideChatPeek(); markChatRead(); renderChat(true); fetchChat(true); }
     else { renderLive(); fetchLive(); }
   }
   slowTick();
@@ -1681,7 +1900,11 @@ function away(sec) {
 let lastNow = Date.now(), slowAcc = 0, saveAcc = 0;
 function frame() {
   const now = Date.now(), dt = (now - lastNow) / 1000; lastNow = now;
-  if (dt > 2) away(dt); else if (dt > 0) earn(cps() * dt);
+  if (dt > 2) away(dt);
+  else if (dt > 0) {
+    earn(cps() * dt);
+    if (!document.hidden) S.playSec = (S.playSec || 0) + dt;
+  }
   updateCombo(Math.min(dt, 0.25));
   renderTop();
   slowAcc += dt; if (slowAcc >= 0.2) { slowAcc = 0; slowTick(); }

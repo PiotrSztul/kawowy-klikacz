@@ -4,7 +4,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="app-version" content="2.0.0">
+<meta name="app-version" content="2.0.1">
 <meta name="theme-color" content="#1f140e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -522,8 +522,9 @@ if (location.search && /[?&]v=/.test(location.search) && history.replaceState) {
   try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {}
 }
 
-const APP_VER = '2.0.0';
+const APP_VER = '2.0.1';
 const SEASON = 2;
+const MIN_RANK_TAPS = 50;
 const $ = s => document.querySelector(s);
 const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const setText = (e, v) => { v = String(v); if (e && e._t !== v) { e._t = v; e.textContent = v; } };
@@ -966,6 +967,11 @@ function tap(x, y) {
   const v = tapVal() * (isCrit ? critMult() : 1);
   earn(v); S.taps++; S.lifeTaps++;
   if (isCrit) S.crits++;
+  if (S.lifeTaps === MIN_RANK_TAPS && getDbUrl()) {
+    lastPushAt = Date.now();
+    pushLive(true).then(() => fetchLive());
+    toast('🌐', 'Witaj w rankingu Online!', 'Przekroczono ' + MIN_RANK_TAPS + ' kliknięć — widać Cię na liście graczy.');
+  }
   const r = stage.getBoundingClientRect(), lx = x - r.left, ly = y - r.top;
   floatText((isCrit ? '⚡ ' : '+') + fmt(v), lx + (Math.random() * 30 - 15), ly - 10, isCrit ? 'crit' : '');
   crumbs(lx, ly, isCrit ? 9 : 4, isCrit ? '#fde047' : null);
@@ -1231,9 +1237,11 @@ $('#btn-prestige').addEventListener('click', () => {
 $('#btn-reset').addEventListener('click', () => modal({ ic: '⚠️', title: 'Zresetować zapis?', danger: true, ok: 'Usuń wszystko', cancel: 'Anuluj',
   body: 'Cały Twój postęp w Sezonie 1 zostanie wyzerowany (nick i odznaka OG zostaną).',
   onOk: () => {
+    const hadRank = S.lifeTaps >= MIN_RANK_TAPS;
     const keep = { sound: S.sound, vib: S.vib, uid: S.uid, nick: S.nick, nickSet: S.nickSet, customDbUrl: S.customDbUrl, lastChatTs: S.lastChatTs, betaOg: S.betaOg, betaLifetime: S.betaLifetime, seasonWelcomed: true };
     S = Object.assign(fresh(), keep);
-    upgKey = null; newAch = 0; setBadge('ach', 0); applySkin(); renderBuffs(true); buildAch(); refreshAll(); save(); pushLive(true);
+    upgKey = null; newAch = 0; setBadge('ach', 0); applySkin(); renderBuffs(true); buildAch(); refreshAll(); save();
+    if (hadRank) pushLive(true, false, true).then(() => fetchLive());
   } }));
 function syncSettings() {
   $('#set-sound').checked = S.sound; $('#set-vib').checked = S.vib;
@@ -1300,11 +1308,13 @@ function promptNick(firstTime) {
     onCancel: () => { if (firstTime) { S.nickSet = true; save(); } }
   });
 }
-async function pushLive(online, keepalive) {
+async function pushLive(online, keepalive, forceClear) {
   const url = getDbUrl();
   if (!url) return;
+  // Nie zapisujemy do bazy graczy poniżej 50 kliknięć — zero śmieciowych „Baristów”!
+  if (S.lifeTaps < MIN_RANK_TAPS && !forceClear) return;
   const endpoint = url + '/players/' + encodeURIComponent(S.uid) + '.json';
-  const body = online ? {
+  const body = (online || forceClear) ? {
     season: SEASON,
     nick: S.nick,
     og: !!S.betaOg,
@@ -1315,7 +1325,7 @@ async function pushLive(online, keepalive) {
     prestige: S.prestige,
     ach: achCount(),
     device: DEVICE,
-    online: true,
+    online: !forceClear && !!online,
     seen: { '.sv': 'timestamp' }
   } : {
     season: SEASON,
@@ -1324,7 +1334,7 @@ async function pushLive(online, keepalive) {
   };
   try {
     const res = await fetch(endpoint, {
-      method: online ? 'PUT' : 'PATCH',
+      method: (online || forceClear) ? 'PUT' : 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
       keepalive: !!keepalive
@@ -1337,7 +1347,7 @@ async function pushLive(online, keepalive) {
       return;
     }
     liveErr = '';
-    if (online) {
+    if (online && !forceClear) {
       const data = await res.json();
       if (data && typeof data.seen === 'number') serverOffset = data.seen - Date.now();
     }
@@ -1358,10 +1368,10 @@ async function fetchLive() {
     const raw = await res.json();
     liveErr = '';
     const now = Date.now() + serverOffset;
-    // Pokazujemy wyłącznie graczy z obecnego Sezonu 1 (season === 2)!
+    // Pokazujemy wyłącznie aktywnych graczy Sezonu 1 z minimum 50 kliknięciami!
     const arr = raw ? Object.entries(raw)
       .map(([id, p]) => Object.assign({ id }, p))
-      .filter(p => p && p.season === SEASON) : [];
+      .filter(p => p && p.season === SEASON && (p.taps || 0) >= MIN_RANK_TAPS) : [];
     arr.sort((a, b) => (b.lifetime || 0) - (a.lifetime || 0) || (b.seen || 0) - (a.seen || 0));
     livePlayers = arr;
 
@@ -1426,6 +1436,15 @@ function renderLive() {
   bar.append(left, btn);
   list.appendChild(bar);
 
+  if (S.lifeTaps < MIN_RANK_TAPS) {
+    const leftTaps = MIN_RANK_TAPS - S.lifeTaps;
+    const note = el('div', 'nick-bar');
+    note.style.fontSize = '12px';
+    note.style.color = 'var(--ink-2)';
+    note.innerHTML = '<span>🔒 Kliknij jeszcze <b>' + leftTaps + '</b> razy (' + S.lifeTaps + '/' + MIN_RANK_TAPS + '), aby wejść do rankingu</span>';
+    list.appendChild(note);
+  }
+
   const betaBtn = el('button', 'beta-btn');
   betaBtn.type = 'button';
   betaBtn.innerHTML = '<div>🏆 Tabela Beta Testerów (OG)<small>Zobacz zapisane wyniki z Bety</small></div><span>Otwórz →</span>';
@@ -1448,7 +1467,7 @@ function renderLive() {
   if (!visible.length) {
     list.appendChild(el('div', 'empty', livePlayers.length
       ? '<div>🌙</div>Nikt teraz nie gra.<br>Przełącz na „Ranking”, by zobaczyć tabelę Sezonu 1.'
-      : '<div>🚀</div>Sezon 1 właśnie wystartował!<br>Kliknij ziarno — za chwilę pojawisz się w rankingu.'));
+      : '<div>🚀</div>Sezon 1 właśnie wystartował!<br>Kliknij ' + MIN_RANK_TAPS + ' razy, aby pojawić się w rankingu.'));
     return;
   }
 

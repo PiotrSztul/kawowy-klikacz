@@ -77,6 +77,11 @@ button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:poin
 .crumb{position:absolute;width:9px;height:12px;margin:-6px 0 0 -4px;border-radius:50%;background:#7a4a2c;box-shadow:inset -2px 0 0 rgba(0,0,0,.3);animation:crumb .75s cubic-bezier(.2,.7,.4,1) forwards}
 #golden{position:absolute;width:62px;height:62px;z-index:3;touch-action:none;filter:drop-shadow(0 0 16px rgba(242,193,78,.85));animation:goldIn .45s cubic-bezier(.2,.9,.3,1.4),wobble 1.8s ease-in-out .45s infinite}
 #golden svg{width:100%;height:100%;display:block}
+.install-tip{position:absolute;left:12px;right:12px;bottom:8px;z-index:3;display:flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;border-radius:14px;background:rgba(24,15,10,.88);border:1px solid rgba(242,193,78,.28);box-shadow:0 8px 20px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:12px;color:#f5e6d2;animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
+.install-tip[hidden]{display:none}
+.install-tip span{flex:1;min-width:0;line-height:1.25}
+.install-tip .it-go{padding:5px 10px;border-radius:9px;background:linear-gradient(180deg,#e09445,var(--caramel-2));color:#fff;font-size:12px;font-weight:800;white-space:nowrap}
+.install-tip .it-x{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.08);color:#cfb699;font-size:13px;font-weight:800;display:grid;place-items:center;flex:none}
 
 /* ---------- sheet ---------- */
 #sheet{flex:0 0 auto;height:clamp(270px,45dvh,450px);background:linear-gradient(180deg,var(--cream),var(--cream-2));color:var(--ink);border-radius:26px 26px 0 0;box-shadow:0 -14px 40px rgba(0,0,0,.45),inset 0 1px 0 #fff;display:flex;flex-direction:column;padding:12px 12px calc(6px + env(safe-area-inset-bottom));position:relative;z-index:4}
@@ -287,6 +292,11 @@ a.btn{display:block;text-align:center;text-decoration:none}
       </svg>
     </button>
     <div id="fx"></div>
+    <div id="install-tip" class="install-tip" hidden="">
+      <span>📲 Dodaj grę jako ikonę na ekran telefonu!</span>
+      <button id="it-go" class="it-go" type="button">Jak?</button>
+      <button id="it-x" class="it-x" type="button" aria-label="Zamknij">✕</button>
+    </div>
   </section>
 
   <section id="sheet">
@@ -369,9 +379,10 @@ a.btn{display:block;text-align:center;text-decoration:none}
           <label class="row-set"><span>Dźwięki</span><input type="checkbox" id="set-sound" class="switch"></label>
           <label class="row-set"><span>Wibracje</span><input type="checkbox" id="set-vib" class="switch"></label>
           <button id="btn-nick" type="button" class="btn ghost wide">✏️ Zmień nick (<span id="set-nick">Barista</span>)</button>
+          <button id="btn-how-install" type="button" class="btn ghost wide">📲 Jak dodać ikonę na telefon?</button>
           <a id="btn-host" href="host.html" class="btn ghost wide">📡 Panel Hosta (podgląd na żywo)</a>
           <button id="btn-install" type="button" class="btn primary wide" hidden="">📲 Zainstaluj aplikację</button>
-          <p class="hint">Instalacja: na iPhonie <b>Udostępnij → „Do ekranu początkowego”</b>, na Androidzie <b>menu ⋮ → „Dodaj do ekranu głównego”</b>.</p>
+          <p class="hint">Gra sprawdza aktualizacje automatycznie w tle — nie musisz jej ręcznie przeładowywać.</p>
           <button id="btn-reset" type="button" class="btn ghost wide">Zresetuj całą grę</button>
         </div>
       </div>
@@ -487,7 +498,7 @@ const makeUid = () => 'p_' + (crypto.randomUUID ? crypto.randomUUID().replace(/-
 const makeNick = () => 'Barista ' + (10 + Math.floor(Math.random() * 89));
 const fresh = () => ({ beans: 0, total: 0, lifetime: 0, taps: 0, lifeTaps: 0, owned: {}, upg: {}, ach: {}, golden: 0, prestige: 0,
   buffs: [], last: Date.now(), start: Date.now(), sound: true, vib: true, mode: 1,
-  uid: makeUid(), nick: makeNick(), nickSet: false, customDbUrl: '', lastChatTs: 0 });
+  uid: makeUid(), nick: makeNick(), nickSet: false, customDbUrl: '', lastChatTs: 0, hideInstallTip: false });
 let S = fresh();
 function load() {
   try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(fresh(), JSON.parse(r)); } catch (e) {}
@@ -1415,6 +1426,90 @@ window.addEventListener('pagehide', () => { save(); pushLive(false, true); });
   });
 })();
 
+/* ---------- podpowiedź: dodaj ikonę na ekran telefonu ---------- */
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent || '') || (/Macintosh/.test(navigator.userAgent || '') && navigator.maxTouchPoints > 1);
+const isIOSSafari = () => isIOS() && /Safari/.test(navigator.userAgent || '') && !/CriOS|FxiOS|EdgiOS|OPiOS|FBAN|FBAV|Instagram|Messenger/.test(navigator.userAgent || '');
+
+function showInstallGuide() {
+  if (deferredInstall) {
+    deferredInstall.prompt();
+    deferredInstall.userChoice.catch(() => {}).finally(() => { deferredInstall = null; $('#btn-install').hidden = true; $('#install-tip').hidden = true; });
+    return;
+  }
+  let body;
+  if (isStandalone()) {
+    body = 'Gra jest już dodana na ekran główny i działa na pełnym ekranie! 🎉';
+  } else if (isIOS()) {
+    body = (isIOSSafari() ? '' : '<b>Najpierw otwórz ten link w przeglądarce Safari</b> (ikona kompasu / „Otwórz w Safari”).<br><br>') +
+      '<div style="text-align:left;line-height:1.55">' +
+      '<b>1.</b> Stuknij przycisk <b>Udostępnij</b> (kwadrat ze strzałką ↑ na dole; w iOS 26 najpierw <b>••• → Udostępnij</b>).<br>' +
+      '<b>2.</b> Wybierz <b>Do ekranu początkowego</b>.<br>' +
+      '<b>3.</b> Zostaw włączone <b>Otwórz jako aplikację webową</b> i kliknij <b>Dodaj</b>.' +
+      '</div><br><small style="opacity:.75">Wskazówka: iPhone trzyma osobny zapis w Safari i w ikonie na pulpicie — najlepiej dodać ikonę od razu!</small>';
+  } else if (/Android/.test(navigator.userAgent || '')) {
+    body = '<div style="text-align:left;line-height:1.55">' +
+      '<b>1.</b> Stuknij menu <b>⋮</b> w prawym górnym rogu Chrome.<br>' +
+      '<b>2.</b> Wybierz <b>Dodaj do ekranu głównego</b> lub <b>Zainstaluj aplikację</b>.<br>' +
+      '<b>3.</b> Potwierdź przyciskiem <b>Dodaj / Zainstaluj</b>.' +
+      '</div>';
+  } else {
+    body = 'Na telefonie otwórz ten sam link w <b>Safari</b> (iPhone) lub <b>Chrome</b> (Android) i wybierz <b>Dodaj do ekranu głównego</b>, żeby mieć grę jako ikonę na pełnym ekranie!';
+  }
+  modal({ ic: '📲', title: 'Ikona gry na telefonie', body, ok: 'Rozumiem' });
+}
+$('#btn-how-install').addEventListener('click', showInstallGuide);
+$('#it-go').addEventListener('click', () => { $('#install-tip').hidden = true; showInstallGuide(); });
+$('#it-x').addEventListener('click', () => { $('#install-tip').hidden = true; S.hideInstallTip = true; save(); });
+function initInstallTip() {
+  const mobile = isIOS() || /Android/.test(navigator.userAgent || '');
+  if (!mobile || isStandalone() || S.hideInstallTip) return;
+  setTimeout(() => {
+    if (!S.hideInstallTip && !isStandalone()) $('#install-tip').hidden = false;
+  }, 12000);
+}
+
+/* ---------- auto-aktualizacja gry (bez ręcznego odświeżania) ---------- */
+let initialSig = null, updatePending = false, updateApplying = false;
+async function readPageSig() {
+  if (!/^https?:$/.test(location.protocol)) return null;
+  try {
+    const res = await fetch(location.pathname + '?_chk=' + Date.now(), { method: 'HEAD', cache: 'no-store' });
+    if (!res.ok) return null;
+    return res.headers.get('etag') || res.headers.get('last-modified') || res.headers.get('content-length') || null;
+  } catch (e) { return null; }
+}
+async function tryApplyUpdate() {
+  if (!updatePending || updateApplying) return;
+  const active = document.activeElement;
+  const typing = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA');
+  if (typing || !golden.hidden || !$('#modal').hidden) {
+    setTimeout(tryApplyUpdate, 3000);
+    return;
+  }
+  updateApplying = true;
+  save();
+  try { await pushLive(true); } catch (e) {}
+  toast('🆕', 'Nowa wersja gry!', 'Odświeżam automatycznie (postęp zapisany)...');
+  setTimeout(async () => {
+    try { await fetch(location.pathname, { cache: 'reload' }); } catch (e) {}
+    location.reload();
+  }, 1600);
+}
+async function checkUpdate() {
+  if (document.hidden || updatePending || !navigator.onLine) return;
+  const sig = await readPageSig();
+  if (!sig) return;
+  if (!initialSig) { initialSig = sig; return; }
+  if (sig !== initialSig) { updatePending = true; tryApplyUpdate(); }
+}
+function initAutoUpdate() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  readPageSig().then(sig => { if (sig) initialSig = sig; });
+  setInterval(checkUpdate, 45000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(); });
+}
+
 /* ---------- start ---------- */
 load();
 buildGen(); buildAch(); renderBuffs(true); refreshAll();
@@ -1425,6 +1520,8 @@ if (getDbUrl()) {
   pushLive(true).then(() => { fetchLive(); fetchChat(false); });
   if (!S.nickSet && $('#modal').hidden) setTimeout(() => { if ($('#modal').hidden) promptNick(true); }, 600);
 }
+initInstallTip();
+initAutoUpdate();
 lastNow = Date.now();
 requestAnimationFrame(frame);
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
